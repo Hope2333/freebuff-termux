@@ -39,7 +39,7 @@ GLIBC_LIB="/data/data/com.termux/files/usr/glibc/lib"
 GLIBC_LD="${GLIBC_LIB}/ld-linux-aarch64.so.1"
 GLIBC_INC="/data/data/com.termux/files/usr/glibc/include"
 BUN_REPO="oven-sh/bun"  # Bun publishes freebuff-compatible linux binaries
-ARCH="aarch64"
+ARCH="arm64"
 
 # ── Step 1: Determine version ───────────────────────────────────────
 if [ "$VERSION" = "latest" ]; then
@@ -58,9 +58,6 @@ TARBALL="$DOWNLOAD_DIR/freebuff-linux-${ARCH}.tar.gz"
 BINARY_IN_TAR="freebuff-linux-${ARCH}/freebuff"
 
 if [ ! -f "$BINARY_PATH" ] && [ "${NO_DOWNLOAD:-0}" != "1" ]; then
-    # freebuff releases are on the oven-sh/bun releases page
-    # They follow format: freebuff-v0.0.96  (or just v0.0.96)
-    # Multiple possible URLs:
     URLS=(
         "https://github.com/CodebuffAI/codebuff-community/releases/download/v${BUN_VERSION}/freebuff-linux-${ARCH}.tar.gz"
         "https://github.com/CodebuffAI/codebuff/releases/download/v${BUN_VERSION}/freebuff-linux-${ARCH}.tar.gz"
@@ -70,10 +67,10 @@ if [ ! -f "$BINARY_PATH" ] && [ "${NO_DOWNLOAD:-0}" != "1" ]; then
     DOWNLOADED=0
     for URL in "${URLS[@]}"; do
         log "Trying: $URL"
-        if curl -sL --connect-timeout 10 --max-time 120 -o "$TARBALL" "$URL"; then
-            log "Downloaded ($(du -h "$TARBALL" | cut -f1))"
-            DOWNLOADED=1
-            break
+        if command -v wget >/dev/null 2>&1; then
+            wget -c --timeout=300 "$URL" -O "$TARBALL" 2>&1 && DOWNLOADED=1 && break
+        else
+            curl -fL --connect-timeout 10 --max-time 600 -o "$TARBALL" "$URL" 2>&1 && DOWNLOADED=1 && break
         fi
     done
 
@@ -86,9 +83,16 @@ Either supply the version as argument, or download manually and place at:
     log "Extracting binary..."
     mkdir -p "$BINARY_DIR"
     tar -xzf "$TARBALL" -C "$DOWNLOAD_DIR"
-    cp "$DOWNLOAD_DIR/$BINARY_IN_TAR" "$BINARY_PATH"
+    # Find the actual binary (structure may vary)
+    BIN="$(find "$DOWNLOAD_DIR" -type f \( -name "freebuff" -o -name "freebuff-linux-*" \) ! -name "*.tar.gz" 2>/dev/null | head -1)"
+    if [ -z "$BIN" ]; then
+        # Try direct path
+        BIN="$DOWNLOAD_DIR/$BINARY_IN_TAR"
+    fi
+    [ -f "$BIN" ] || BIN="$(find "$DOWNLOAD_DIR" -type f -executable 2>/dev/null | head -1)"
+    cp "$BIN" "$BINARY_PATH"
     chmod +x "$BINARY_PATH"
-    log "Binary installed: $BINARY_PATH"
+    log "Binary installed: $BINARY_PATH ($(du -h "$BINARY_PATH" | cut -f1))"
 else
     if [ -f "$BINARY_PATH" ]; then
         log "Binary already present: $BINARY_PATH ($(du -h "$BINARY_PATH" | cut -f1))"
