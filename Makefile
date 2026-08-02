@@ -99,21 +99,21 @@ stage: produce
 	@bash "$(SCRIPTS_DIR)/build.sh"
 
 deb:
-	rm -rf packaging/dpkg/work
+	rm -rf packing/dpkg/work
 	MAINTAINER='$(PACKAGER_NAME)' ./scripts/package/package_deb.sh
 	@if [ "$(MIX)" = "1" ]; then \
-		mkdir -p "$(OUTPUT_ROOT)" && cp -f packaging/dpkg/freebuff_*.deb "$(OUTPUT_ROOT)/" 2>/dev/null || true; \
+		mkdir -p "$(OUTPUT_ROOT)" && cp -f packing/dpkg/freebuff_*.deb "$(OUTPUT_ROOT)/" 2>/dev/null || true; \
 	else \
-		mkdir -p "$(OUTPUT_ROOT)/deb" && cp -f packaging/dpkg/freebuff_*.deb "$(OUTPUT_ROOT)/deb/" 2>/dev/null || true; \
+		mkdir -p "$(OUTPUT_ROOT)/deb" && cp -f packing/dpkg/freebuff_*.deb "$(OUTPUT_ROOT)/deb/" 2>/dev/null || true; \
 	fi
 
 pacman:
-	rm -rf packaging/pacman/pkg packaging/pacman/src
+	rm -rf packing/pacman/pkg packing/pacman/src
 	PACKAGER_NAME='$(PACKAGER_NAME)' ./scripts/package/package_pacman.sh
 	@if [ "$(MIX)" = "1" ]; then \
-		mkdir -p "$(OUTPUT_ROOT)" && cp -f packaging/pacman/freebuff-*.pkg.* "$(OUTPUT_ROOT)/" 2>/dev/null || true; \
+		mkdir -p "$(OUTPUT_ROOT)" && cp -f packing/pacman/freebuff-*.pkg.* "$(OUTPUT_ROOT)/" 2>/dev/null || true; \
 	else \
-		mkdir -p "$(OUTPUT_ROOT)/pacman" && cp -f packaging/pacman/freebuff-*.pkg.* "$(OUTPUT_ROOT)/pacman/" 2>/dev/null || true; \
+		mkdir -p "$(OUTPUT_ROOT)/pacman" && cp -f packing/pacman/freebuff-*.pkg.* "$(OUTPUT_ROOT)/pacman/" 2>/dev/null || true; \
 	fi
 
 # ═══════════════════════════════════════════════════════════════════
@@ -132,7 +132,7 @@ test:
 
 clean:
 	@echo "Cleaning..."
-	@rm -rf "$(STAGED)" packaging/dpkg/work packaging/pacman/pkg packaging/pacman/src
+	@rm -rf "$(STAGED)" packing/dpkg/work packing/pacman/pkg packing/pacman/src
 	@rm -f "$(WRAPPER_OUT)" "$(HOOK_OUT)"
 	@echo "  Removed build artifacts"
 	@echo "[✓] Clean"

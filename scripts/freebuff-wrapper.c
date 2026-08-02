@@ -59,8 +59,11 @@ static void xunsetenv(const char *name) {
 
 static int exists(const char *path, int mode_mask) {
     struct stat st;
-    return (stat(path, &st) == 0 && (st.st_mode & S_IFMT) != S_IFDIR
-            && (mode_mask == 0 || (st.st_mode & mode_mask)));
+    if (stat(path, &st) != 0 || (st.st_mode & S_IFMT) == S_IFDIR)
+        return 0;
+    if (mode_mask == 0)
+        return 1;
+    return access(path, mode_mask) == 0;
 }
 
 static void create_fake_stat(const char *path) {

@@ -14,21 +14,21 @@ if [[ -z "${VERSION:-}" && -x "$STAGED_PREFIX/lib/freebuff/runtime/freebuff" ]];
 fi
 [[ -n "$VERSION" ]] || { echo "Error: unable to determine version"; exit 1; }
 
-cd "$ROOT_DIR/packaging/pacman"
-rm -rf "$ROOT_DIR/packaging/pacman/pkg" "$ROOT_DIR/packaging/pacman/src"
+cd "$ROOT_DIR/packing/pacman"
+rm -rf "$ROOT_DIR/packing/pacman/pkg" "$ROOT_DIR/packing/pacman/src"
 
-TMP_MAKEPKG_CONF="$ROOT_DIR/packaging/pacman/.makepkg-freebuff.conf"
-TMP_PKGBUILD="$ROOT_DIR/packaging/pacman/.PKGBUILD.freebuff.tmp"
+TMP_MAKEPKG_CONF="$ROOT_DIR/packing/pacman/.makepkg-freebuff.conf"
+TMP_PKGBUILD="$ROOT_DIR/packing/pacman/.PKGBUILD.freebuff.tmp"
 cleanup() { rm -f "$TMP_MAKEPKG_CONF" "$TMP_PKGBUILD"; }
 trap cleanup EXIT
 
 cp /data/data/com.termux/files/usr/etc/makepkg.conf "$TMP_MAKEPKG_CONF"
 printf "\nPACKAGER=%q\n" "$PACKAGER_NAME" >>"$TMP_MAKEPKG_CONF"
 
-cp "$ROOT_DIR/packaging/pacman/PKGBUILD" "$TMP_PKGBUILD"
+cp "$ROOT_DIR/packing/pacman/PKGBUILD" "$TMP_PKGBUILD"
 sed -i "s/^pkgver=.*/pkgver=$VERSION/" "$TMP_PKGBUILD"
 sed -i "s/^pkgrel=.*/pkgrel=$PKGREL/" "$TMP_PKGBUILD"
 
 STAGED_PREFIX="$STAGED_PREFIX" REPO_ROOT="$ROOT_DIR" makepkg --config "$TMP_MAKEPKG_CONF" -f --noconfirm -p "$TMP_PKGBUILD"
 
-echo "Pacman package created under: $ROOT_DIR/packaging/pacman"
+echo "Pacman package created under: $ROOT_DIR/packing/pacman"

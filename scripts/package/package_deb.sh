@@ -11,8 +11,8 @@ command -v dpkg-deb >/dev/null 2>&1 || { echo "Error: dpkg-deb not found"; exit 
 [[ -x "$STAGED_PREFIX/bin/freebuff" ]] || { echo "Error: missing staged launcher"; exit 1; }
 
 : "${VERSION:=0.0.0}"
-DEB_ROOT="$ROOT_DIR/packaging/dpkg/work"
-OUT_DIR="$ROOT_DIR/packaging/dpkg"
+DEB_ROOT="$ROOT_DIR/packing/dpkg/work"
+OUT_DIR="$ROOT_DIR/packing/dpkg"
 OUT_FILE="$OUT_DIR/freebuff_${VERSION}_${ARCH_DEB}.deb"
 
 rm -rf "$DEB_ROOT"
