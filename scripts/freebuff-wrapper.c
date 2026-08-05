@@ -177,7 +177,7 @@ int main(int argc, char *argv[], char *envp[]) {
     /* 6. Set LD_PRELOAD for hook.so (setenv before exec, but after
      *    unsetenv above — we selectively re-introduce our own hook).
      *    This is done via env manipulation in exec, not via argv. */
-    if (has_hook) {
+    if (has_hook && !has_proot) {
         setenv("LD_PRELOAD", HOOK_SO, 1);
     }
 
