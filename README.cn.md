@@ -18,6 +18,29 @@ freebuff --version
 
 首次运行 `install.sh` 会从 GitHub Releases 自动下载约 129MB 的二进制文件（若网络慢等待即可）。
 
+## 从 hope2333 软件源安装（Termux）
+
+配置软件源（一行）：
+
+```sh
+curl -fsSL https://hope2333.github.io/repo/install.sh | sh
+```
+
+配置并安装（一行）：
+
+```sh
+curl -fsSL https://hope2333.github.io/repo/install.sh | sh -s -- --install freebuff
+```
+
+后续升级：
+
+```sh
+pacman -Syu                    # pacman 客户端
+apt update && apt upgrade     # apt 客户端（mirrorlist 包更新走 [hope2333-meta] 源）
+```
+
+详见：https://hope2333.github.io/wiki/guides/install.html
+
 ## 架构概览
 
 ```
